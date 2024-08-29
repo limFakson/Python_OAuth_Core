@@ -1,5 +1,5 @@
 # OAuth_Core_Lib
-A Python library for handling OAuth authentication, designed for use in third-party applications. This package simplifies the process of obtaining authorization from Google, exchanging authorization codes for access tokens, refreshing access tokens, and retrieving user information.
+A Python library for handling OAuth authentication, designed for use in third-party applications. This package simplifies the process of obtaining authorization from OAuth provider, exchanging authorization codes for access tokens, refreshing access tokens, and retrieving user information.
 
 ## Table of Contents
 
@@ -8,6 +8,7 @@ A Python library for handling OAuth authentication, designed for use in third-pa
   - [Create a JSON Secrets File]
   - [Set Up Environment Variables]
 - [Usage](#usage)
+  - [Load Your json file](#load-the-json-file)
   - [Initialize the GoogleOauth Class](#initialize-the-googleoauth-class)
   - [Authorize URL](#authorize-url)
   - [Exchange Authorization Code](#exchange-authorization-code)
@@ -31,8 +32,8 @@ Create a JSON Secrets File and add the following:
 
 ```json
 {
-  "core": {
-    "project_id": "your_project_id",
+  "google": {
+    "project_id": "your_project_id", // Optional buh good for identification
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
@@ -44,6 +45,7 @@ Create a JSON Secrets File and add the following:
 Set Up Environment Variables
 Create a .env file in your project root directory with the following contents, the package will get the variables needed itself.
 ```text
+# Google credentials and url
 GOOGLE_KEY=your_client_id
 GOOGLE_SECRET=your_client_secret
 GOOGLE_TOKEN_INFO=google_token_info_api
@@ -52,15 +54,22 @@ GOOGLE_API=google_api
 
 ## Usage
 
-# Initialize the GoogleOauth Class
+## Load the json file
 ```python
-from core.google_oauth_google import GoogleOauth
+from core.oauth import secrets
 
-secrets_file = Path('your_json_file.json')
-oauth = GoogleOauth(secrets_file)
+json_file = secrets.load_file(Path('your_json_file.json'))
 ```
 
-# Authorize URL
+## Initialize the Oauth Class
+```python
+# For google oauth
+from core.oauth import google
+
+oauth = google.GoogleOauth(json_file)
+```
+
+## Authorize URL
 Generate the URL to redirect users to Google for authorization
 
 ```python 
@@ -68,7 +77,7 @@ auth_url = oauth.authorise()
 ```
 - Returns: A URL string where users will be redirected to authorize your application
 
-# Exchange Authorization Code
+## Exchange Authorization Code
 Once the user is redirected back to your application, capture the query parameters (which include the authorization code) and exchange them for an access token (it takes in only dict)
 
 ```python
@@ -82,7 +91,7 @@ tokens = oauth.exchange_code(query_params)
   `scope`: The scope of access granted by the user.
   `token_type`: The type of token issued (typically "Bearer").
 
-# Check Access Token(optional)
+## Check Access Token(optional)
 Check if the access token is still valid
 
 ```python
@@ -94,7 +103,7 @@ token_info = oauth.check_access_token(tokens['access_token'])
   `scope`: The scope associated with the token.
   `expires_in`: The number of seconds remaining before the token expires.
 
-# Refresh Access Token
+## Refresh Access Token
 If the access token has expired, use the refresh token to get a new one
 note: refreash token does not come the second time
 
@@ -103,7 +112,7 @@ refreshed_tokens = oauth.refresh_token(tokens['refresh_token'])
 ```
 - Returns: A dictionary similar to the one returned by `exchange_code`, but without a new `refreash_token`.
 
-# Get User Information
+## Get User Information
 Retrieve the authenticated user's information using the access token
 
 ```python

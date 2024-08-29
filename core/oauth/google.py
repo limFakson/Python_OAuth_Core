@@ -9,25 +9,21 @@ from urllib.parse import parse_qsl, urlencode
 load_dotenv()
 
 """
-Module for Google OAUTH python library for third party apps
+Module for Google OAUTH python package for third party application
 """
 
 class GoogleOauth:
 
-    def __init__(self, secrets_file: str):
+    def __init__(self, secrets_file: dict[str,str]):
         self.SCOPES = [
             "openid",
             "https://www.googleapis.com/auth/userinfo.profile",
             "https://www.googleapis.com/auth/userinfo.email",
         ]
-        self.secrets = self.load_secrets(secrets_file)
+        self.secrets = secrets_file["google"]
         self.state = hashlib.sha256(os.urandom(1024)).hexdigest()
         self.port = 8000
         self.redirect_uri = f'{self.secrets['redirect_uris']}'
-
-
-    def load_secrets(self, secrets_file: str) -> dict[str: str]:
-        return json.loads(secrets_file.read_text())["installed"]
 
 
     """
