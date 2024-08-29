@@ -72,7 +72,7 @@ auth_url = oauth.authorise()
 Once the user is redirected back to your application, capture the query parameters (which include the authorization code) and exchange them for an access token (it takes in only dict)
 
 ```python
-query_params = {'code': 'authorization_code', 'state': 'your_state'} # converted query gotten from the redirect uri to dict 
+query_params = {'code': 'authorization_code', 'state': 'your_state'} # query gotten from the redirect uri converted to dictionary
 tokens = oauth.exchange_code(query_params)
 ```
 - Returns: A dictionary containing:
